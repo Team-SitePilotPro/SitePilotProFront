@@ -1,0 +1,34 @@
+# =========================
+# Node / Nuxt
+# =========================
+node_modules/
+.nuxt/
+.nitro
+.output/
+dist/
+.cache/
+.env
+.env.*
+!.env.example
+
+# Logs
+npm-debug.log*
+*.log*
+
+# =========================
+# IDE / OS
+# =========================
+.DS_Store
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# PHPStorm
+.idea/
+
+# =========================
+# Tests / coverage
+# =========================
+coverage/
+.phpunit.result.cache

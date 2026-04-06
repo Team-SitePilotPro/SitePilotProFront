@@ -1,0 +1,13 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme static {
+  --font-sans: 'Public Sans', sans-serif;
+
+  --color-primarySite: #0C2347;
+  --color-secondarySite: #F86A02;
+  --color-tertiarySite: #45AB45;
+
+  --color-red-500: oklch(63.7% 0.237 25.331);
+
+}
