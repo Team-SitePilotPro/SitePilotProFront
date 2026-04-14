@@ -4,10 +4,52 @@
 @theme static {
   --font-sans: 'Public Sans', sans-serif;
 
-  --color-primarySite: #0C2347;
-  --color-secondarySite: #F86A02;
-  --color-tertiarySite: #45AB45;
+  /* Palette complète pour primarySite */
+  --color-primarySite-50: #e8ecf2;
+  --color-primarySite-100: #c5cdd9;
+  --color-primarySite-200: #9eadc0;
+  --color-primarySite-300: #778da7;
+  --color-primarySite-400: #597494;
+  --color-primarySite-500: #3b5b81;
+  --color-primarySite-600: #2a4568;
+  --color-primarySite-700: #1b3457;
+  --color-primarySite-800: #0C2347;
+  --color-primarySite-900: #081a35;
+  --color-primarySite-950: #041020;
 
-  --color-red-500: oklch(63.7% 0.237 25.331);
+  /* Palette complète pour secondarySite */
+  --color-secondarySite-50: #fff3e8;
+  --color-secondarySite-100: #ffe0c2;
+  --color-secondarySite-200: #ffbf85;
+  --color-secondarySite-300: #ff9e48;
+  --color-secondarySite-400: #fa8120;
+  --color-secondarySite-500: #F86A02;
+  --color-secondarySite-600: #d45a02;
+  --color-secondarySite-700: #a84702;
+  --color-secondarySite-800: #7c3401;
+  --color-secondarySite-900: #502201;
+  --color-secondarySite-950: #2e1300;
 
+  /* Palette complète pour tertiarySite */
+  --color-tertiarySite-50: #edf7ed;
+  --color-tertiarySite-100: #d0ead0;
+  --color-tertiarySite-200: #a8d5a8;
+  --color-tertiarySite-300: #7dc07d;
+  --color-tertiarySite-400: #5fb35f;
+  --color-tertiarySite-500: #45AB45;
+  --color-tertiarySite-600: #3a9139;
+  --color-tertiarySite-700: #2e742e;
+  --color-tertiarySite-800: #235823;
+  --color-tertiarySite-900: #183c18;
+  --color-tertiarySite-950: #0d220d;
+}
+* {
+  font-family: Roboto, sans-serif !important;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+h1 {
+  font-size: 1.875rem;
 }
