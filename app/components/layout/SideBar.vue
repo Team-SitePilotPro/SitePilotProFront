@@ -8,24 +8,15 @@ const open = ref(false);
 const links = [[{
   label: 'Tableau de Bord',
   icon: 'i-lucide-house',
-  to: '/',
-  onSelect: () => {
-    open.value = false;
-  }
+  to: '/'
 }, {
-  label: 'Inbox',
+  label: 'Chantier',
   icon: 'i-lucide-inbox',
-  to: '/inbox',
-  onSelect: () => {
-    open.value = false;
-  }
+  to: '/worksite'
 }, {
-  label: 'Customers',
+  label: 'Clients',
   icon: 'i-lucide-users',
-  to: '/customers',
-  onSelect: () => {
-    open.value = false;
-  }
+  to: '/client'
 }], [{
   label: 'Settings',
   to: '/settings',
@@ -87,10 +78,10 @@ const site = ref({
               size="2xl"
             />
             <div v-if="!collapsed">
-              <strong class="text-primarySite">
+              <strong class="text-primary">
                 {{ site.name }}
               </strong>
-              <span class="text-secondarySite font-semibold">
+              <span class="text-secondary font-semibold">
                 {{ site.suffixeName }}
               </span>
             </div>
