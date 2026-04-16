@@ -17,7 +17,15 @@ export const WorksiteStatusEnumMap = new Map<
   [WorksiteStatusEnum.Finished, 'Terminé']
 ]);
 
-type BadgeColor = 'neutral' | 'error' | 'primary' | 'secondary' | 'success' | 'info' | 'warning';
+export type BadgeColor
+  = 'neutral'
+    | 'error'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'info'
+    | 'warning';
+
 export const WorksiteStatusColorMap: Record<WorksiteStatusEnum, BadgeColor> = {
   [WorksiteStatusEnum.All]: 'neutral',
   [WorksiteStatusEnum.ToDo]: 'info',

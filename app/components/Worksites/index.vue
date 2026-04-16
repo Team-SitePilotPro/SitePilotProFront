@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { resolveComponent } from 'vue';
 import { getPaginationRowModel } from '@tanstack/vue-table';
 import { worksitesData } from '~/data/worksite';
-import type { WorksiteStatusEnum } from '~/components/Worksites/Types/worksiteStatusEnum';
 import { useTableColumns } from '~/components/Tables/Composables/useTableColumns';
 import WorksiteFilters from '~/components/Worksites/WorksiteFilters.vue';
-import {upperFirst} from "scule";
-
-const UButton = resolveComponent('UButton');
+import { upperFirst } from 'scule';
+import { formatDate } from '~/components/Tables/utils/dateUtils';
+import {
+  WorksiteStatusColorMap,
+  type WorksiteStatusEnum,
+  WorksiteStatusEnumMap,
+  type BadgeColor
+} from '~/components/Worksites/Types/worksiteStatusEnum';
+import ActionsDropdown from '~/components/Tables/components/ActionsDropdown.vue';
 
 const table = useTemplateRef('table');
 const { worksiteColumns } = useTableColumns();
@@ -17,6 +21,18 @@ const pagination = ref({
 });
 const globalFilter = ref('');
 const selectedStatus = ref<WorksiteStatusEnum>();
+
+const getStatusColor = computed(() => {
+  return (status: WorksiteStatusEnum): BadgeColor => {
+    return WorksiteStatusColorMap[status] ?? 'neutral';
+  };
+});
+
+const getStatusLabel = computed(() => {
+  return (status: WorksiteStatusEnum): string => {
+    return WorksiteStatusEnumMap.get(status) ?? 'Inconnu';
+  };
+});
 </script>
 
 <template>
@@ -29,7 +45,9 @@ const selectedStatus = ref<WorksiteStatusEnum>();
         />
         <UDropdownMenu
           :items="table?.tableApi?.getAllColumns().filter(column => column.getCanHide()).map(column => ({
-            label: upperFirst(column.id),
+            label: typeof column.columnDef.header === 'string'
+              ? column.columnDef.header
+              : upperFirst(column.id),
             type: 'checkbox' as const,
             checked: column.getIsVisible(),
             onUpdateChecked(checked: boolean) {
@@ -41,16 +59,16 @@ const selectedStatus = ref<WorksiteStatusEnum>();
           }))"
           :content="{ align: 'end' }"
         >
-        <div class="px-4 py-3.5">
-          <UButton
+          <div class="px-4 py-3.5">
+            <UButton
               label="Affichage"
               color="neutral"
               variant="outline"
               trailing-icon="i-lucide-chevron-down"
               class="ml-auto"
               aria-label="Columns select dropdown"
-          />
-        </div>
+            />
+          </div>
         </UDropdownMenu>
       </div>
       <div class="flex px-4 py-3.5">
@@ -60,7 +78,7 @@ const selectedStatus = ref<WorksiteStatusEnum>();
           color="secondary"
           variant="solid"
         >
-          Ajouter un chantier
+          {{ $t('worksite.add') }}
         </UButton>
       </div>
     </div>
@@ -76,6 +94,69 @@ const selectedStatus = ref<WorksiteStatusEnum>();
     }"
     class="flex-1"
   >
+    <template #expand-cell="{ row }">
+      <UButton
+        color="neutral"
+        variant="ghost"
+        :icon="row.getIsExpanded() ? 'i-lucide-minus' : 'i-lucide-plus'"
+        square
+        aria-label="Expand"
+        @click="row.toggleExpanded()"
+      />
+    </template>
+    <!-- Sortable header: startDate -->
+    <template #startDate-header="{ column }">
+      <UButton
+        color="neutral"
+        variant="ghost"
+        label="Date de début"
+        :icon="
+          column.getIsSorted() === 'asc' ? 'i-lucide-arrow-up-narrow-wide'
+          : column.getIsSorted() === 'desc' ? 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down'
+        "
+        @click="column.toggleSorting(column.getIsSorted() === 'asc')"
+      />
+    </template>
+
+    <template #startDate-cell="{ row }">
+      {{ formatDate(row.original.startDate) }}
+    </template>
+
+    <!-- Sortable header: endDate -->
+    <template #endDate-header="{ column }">
+      <UButton
+        color="neutral"
+        variant="ghost"
+        label="Date de fin"
+        :icon="
+          column.getIsSorted() === 'asc' ? 'i-lucide-arrow-up-narrow-wide'
+          : column.getIsSorted() === 'desc' ? 'i-lucide-arrow-down-wide-narrow'
+            : 'i-lucide-arrow-up-down'
+        "
+        @click="column.toggleSorting(column.getIsSorted() === 'asc')"
+      />
+    </template>
+
+    <template #endDate-cell="{ row }">
+      {{ formatDate(row.original.endDate) }}
+    </template>
+
+    <!-- Status badge -->
+    <template #status-cell="{ row }">
+      <UBadge
+        :color="getStatusColor(row.original.status)"
+        :label="getStatusLabel(row.original.status)"
+      />
+    </template>
+
+    <!-- Actions -->
+    <template #actions-cell="{ row }">
+      <ActionsDropdown
+        :is-expanded="row.getIsExpanded()"
+        @toggle-expand="row.toggleExpanded()"
+      />
+    </template>
     <template #expanded="{ row }">
       <pre>{{ row.original }}</pre>
     </template>

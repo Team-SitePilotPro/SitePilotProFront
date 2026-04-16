@@ -19,9 +19,13 @@ useHead({
 <template>
   <UDashboardPanel>
     <template #header>
-      <UDashboardNavbar :title="pageTitle">
+      <UDashboardNavbar>
         <template #leading>
           <UDashboardSidebarCollapse />
+        </template>
+
+        <template #title>
+          <span class="text-primary">{{ pageTitle }}</span>
         </template>
 
         <template #right>
