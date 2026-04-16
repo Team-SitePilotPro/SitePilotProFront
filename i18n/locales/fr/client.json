@@ -2,10 +2,10 @@
   "client": {
     "add": "Ajouter un client",
     "list": {
-      "titleList": "Liste des clients",
+      "title": "Liste des clients",
       "name": "Nom de la société",
       "email": "Email",
-      "contact": "Contact",
+      "contact": "Nom du Contact",
       "address": "Adresse de la société",
       "postalCode": "Code postal",
       "phone": "Téléphone",

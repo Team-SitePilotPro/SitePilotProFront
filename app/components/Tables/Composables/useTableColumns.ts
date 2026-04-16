@@ -1,7 +1,9 @@
-import { worksiteColumns } from '../workSite.table.columns';
+import { worksiteColumns } from '../../Worksites/workSite.table.columns';
+import { clientColumns } from '~/components/Clients/Client.table.columns';
 
 export const useTableColumns = () => {
   return {
-    worksiteColumns
+    worksiteColumns,
+    clientColumns
   };
 };
