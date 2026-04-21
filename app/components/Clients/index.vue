@@ -109,7 +109,7 @@ const globalFilter = ref('');
       <pre>{{ row.original }}</pre>
     </template>
   </UTable>
-
+{{ " teste " }}
   <div class="flex justify-end border-t border-default pt-4 px-4">
     <UPagination
       :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
