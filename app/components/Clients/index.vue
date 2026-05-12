@@ -83,20 +83,18 @@ const globalFilter = ref('');
         @click="row.toggleExpanded()"
       />
     </template>
-    <template #company-cell="{ row }">
-      {{ row.original.company.name }}
+    <template #compagny-cell="{ row }">
+      {{ row.original.compagny ?? '—' }}
     </template>
-    <template #contact-cell="{ row }">
-      {{ row.original.contact }}
+    <template #type-cell="{ row }">
+      <UBadge
+        :color="row.original.type === 'professionnel' ? 'primary' : 'secondary'"
+        :label="row.original.type === 'professionnel' ? 'Pro' : 'Particulier'"
+        size="sm"
+      />
     </template>
-    <template #address-cell="{ row }">
-      {{ row.original.address.street }}, {{ row.original.address.zipcode }} {{ row.original.address.city }}
-    </template>
-    <template #email-cell="{ row }">
-      {{ row.original.email }}
-    </template>
-    <template #phone-cell="{ row }">
-      {{ row.original.phone }}
+    <template #adress-cell="{ row }">
+      {{ row.original.adress.city }} ({{ row.original.adress.zip_code }})
     </template>
 
     <template #actions-cell="{ row }">

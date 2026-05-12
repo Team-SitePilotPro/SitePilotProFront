@@ -1,173 +1,95 @@
 <script setup lang="ts">
-import { getPaginationRowModel } from '@tanstack/vue-table';
-import { worksitesData } from '~/data/worksite';
-import { useTableColumns } from '~/components/Tables/Composables/useTableColumns';
 import WorksiteFilters from '~/components/Worksites/WorksiteFilters.vue';
-import { upperFirst } from 'scule';
-import { formatDate } from '~/components/Tables/utils/dateUtils';
-import {
-  WorksiteStatusColorMap,
-  type WorksiteStatusEnum,
-  WorksiteStatusEnumMap,
-  type BadgeColor
-} from '~/components/Worksites/Types/worksiteStatusEnum';
-import ActionsDropdown from '~/components/Tables/components/ActionsDropdown.vue';
+import WorksiteCard from '~/components/Worksites/WorksiteCard.vue';
+import WorksiteFormSlideover from '~/components/Worksites/WorksiteFormSlideover.vue';
+import type { WorksiteStatusEnum } from '~/components/Worksites/Types/worksiteStatusEnum';
 
-const table = useTemplateRef('table');
-const { worksiteColumns } = useTableColumns();
-const pagination = ref({
-  pageIndex: 0,
-  pageSize: 5
-});
+const { worksites, addWorksite, getNextCode } = useWorksites();
+
+const pagination = ref({ pageSize: 8 });
 const globalFilter = ref('');
 const selectedStatus = ref<WorksiteStatusEnum>();
+const gridPage = ref(1);
 
-const getStatusColor = computed(() => {
-  return (status: WorksiteStatusEnum): BadgeColor => {
-    return WorksiteStatusColorMap[status] ?? 'neutral';
-  };
-});
+const isFormOpen = ref(false);
+const nextCode = ref('');
 
-const getStatusLabel = computed(() => {
-  return (status: WorksiteStatusEnum): string => {
-    return WorksiteStatusEnumMap.get(status) ?? 'Inconnu';
-  };
+const openAdd = () => {
+  nextCode.value = getNextCode();
+  isFormOpen.value = true;
+};
+
+const handleSave = (data: Parameters<typeof addWorksite>[0]) => {
+  addWorksite(data);
+  isFormOpen.value = false;
+};
+
+const filteredWorksites = computed(() => {
+  gridPage.value = 1;
+  return worksites.value.filter((w) => {
+    const matchStatus = !selectedStatus.value || selectedStatus.value === 'all' || w.statut === selectedStatus.value;
+    const search = globalFilter.value.toLowerCase();
+    const matchSearch = !search
+      || w.name.toLowerCase().includes(search)
+      || (w.client_name?.toLowerCase().includes(search) ?? false)
+      || w.adress.city.toLowerCase().includes(search)
+      || (w.code?.toLowerCase().includes(search) ?? false);
+    return matchStatus && matchSearch;
+  });
 });
 </script>
 
 <template>
+  <WorksiteFormSlideover
+    v-model:open="isFormOpen"
+    :default-code="nextCode"
+    @save="handleSave"
+  />
+
   <div class="w-full space-y-4">
     <div class="flex flex-row justify-between">
-      <div class="flex">
-        <WorksiteFilters
-          v-model:global-filter="globalFilter"
-          v-model:selected-status="selectedStatus"
-        />
-        <UDropdownMenu
-          :items="table?.tableApi?.getAllColumns().filter(column => column.getCanHide()).map(column => ({
-            label: typeof column.columnDef.header === 'string'
-              ? column.columnDef.header
-              : upperFirst(column.id),
-            type: 'checkbox' as const,
-            checked: column.getIsVisible(),
-            onUpdateChecked(checked: boolean) {
-              table?.tableApi?.getColumn(column.id)?.toggleVisibility(!!checked)
-            },
-            onSelect(e: Event) {
-              e.preventDefault()
-            }
-          }))"
-          :content="{ align: 'end' }"
-        >
-          <div class="px-4 py-3.5">
-            <UButton
-              label="Affichage"
-              color="neutral"
-              variant="outline"
-              trailing-icon="i-lucide-chevron-down"
-              class="ml-auto"
-              aria-label="Columns select dropdown"
-            />
-          </div>
-        </UDropdownMenu>
-      </div>
-      <div class="flex px-4 py-3.5">
+      <WorksiteFilters
+        v-model:global-filter="globalFilter"
+        v-model:selected-status="selectedStatus"
+      />
+
+      <div class="flex items-center px-4 py-3.5">
         <UButton
           icon="i-lucide-plus"
           size="md"
           color="secondary"
           variant="solid"
+          @click="openAdd"
         >
           {{ $t('worksite.add') }}
         </UButton>
       </div>
     </div>
   </div>
-  <UTable
-    ref="table"
-    v-model:pagination="pagination"
-    v-model:global-filter="globalFilter"
-    :data="worksitesData"
-    :columns="worksiteColumns"
-    :pagination-options="{
-      getPaginationRowModel: getPaginationRowModel()
-    }"
-    class="flex-1"
+
+  <div
+    v-if="filteredWorksites.length"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-4"
   >
-    <template #expand-cell="{ row }">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        :icon="row.getIsExpanded() ? 'i-lucide-minus' : 'i-lucide-plus'"
-        square
-        aria-label="Expand"
-        @click="row.toggleExpanded()"
-      />
-    </template>
-    <!-- Sortable header: startDate -->
-    <template #startDate-header="{ column }">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        label="Date de début"
-        :icon="
-          column.getIsSorted() === 'asc' ? 'i-lucide-arrow-up-narrow-wide'
-          : column.getIsSorted() === 'desc' ? 'i-lucide-arrow-down-wide-narrow'
-            : 'i-lucide-arrow-up-down'
-        "
-        @click="column.toggleSorting(column.getIsSorted() === 'asc')"
-      />
-    </template>
-
-    <template #startDate-cell="{ row }">
-      {{ formatDate(row.original.startDate) }}
-    </template>
-
-    <!-- Sortable header: endDate -->
-    <template #endDate-header="{ column }">
-      <UButton
-        color="neutral"
-        variant="ghost"
-        label="Date de fin"
-        :icon="
-          column.getIsSorted() === 'asc' ? 'i-lucide-arrow-up-narrow-wide'
-          : column.getIsSorted() === 'desc' ? 'i-lucide-arrow-down-wide-narrow'
-            : 'i-lucide-arrow-up-down'
-        "
-        @click="column.toggleSorting(column.getIsSorted() === 'asc')"
-      />
-    </template>
-
-    <template #endDate-cell="{ row }">
-      {{ formatDate(row.original.endDate) }}
-    </template>
-
-    <!-- Status badge -->
-    <template #status-cell="{ row }">
-      <UBadge
-        :color="getStatusColor(row.original.status)"
-        :label="getStatusLabel(row.original.status)"
-      />
-    </template>
-
-    <!-- Actions -->
-    <template #actions-cell="{ row }">
-      <ActionsDropdown
-        :is-expanded="row.getIsExpanded()"
-        @toggle-expand="row.toggleExpanded()"
-      />
-    </template>
-    <template #expanded="{ row }">
-      <pre>{{ row.original }}</pre>
-    </template>
-  </UTable>
+    <WorksiteCard
+      v-for="worksite in filteredWorksites.slice((gridPage - 1) * pagination.pageSize, gridPage * pagination.pageSize)"
+      :key="worksite.id"
+      :worksite="worksite"
+    />
+  </div>
+  <div
+    v-else
+    class="flex flex-col items-center justify-center py-16 text-muted gap-2"
+  >
+    <UIcon name="i-lucide-folder-open" class="size-10" />
+    <span>Aucun chantier trouvé</span>
+  </div>
 
   <div class="flex justify-end border-t border-default pt-4 px-4">
     <UPagination
-      :page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-      :items-per-page="table?.tableApi?.getState().pagination.pageSize"
-      :total="table?.tableApi?.getFilteredRowModel().rows.length"
-      @update:page="(p) => table?.tableApi?.setPageIndex(p - 1)"
+      v-model:page="gridPage"
+      :items-per-page="pagination.pageSize"
+      :total="filteredWorksites.length"
     />
   </div>
 </template>
