@@ -28,8 +28,7 @@ export default defineNuxtConfig({
     }
   },
   i18n: {
-    lazy: true,
-    Types: 'composition',
+    defaultLocale: 'fr',
     langDir: 'locales',
     strategy: 'no_prefix',
     locales: [
@@ -58,6 +57,11 @@ export default defineNuxtConfig({
         ]
       }
     ],
-    defaultLocale: 'fr'
+
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'i18n_redirected',
+      redirectOn: 'root'
+    }
   }
 });
