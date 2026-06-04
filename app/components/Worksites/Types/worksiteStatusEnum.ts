@@ -31,5 +31,5 @@ export const WorksiteStatusColorMap: Record<WorksiteStatusEnum, BadgeColor> = {
   [WorksiteStatusEnum.ToDo]: 'info',
   [WorksiteStatusEnum.InProgress]: 'warning',
   [WorksiteStatusEnum.Pending]: 'neutral',
-  [WorksiteStatusEnum.Finished]: 'success',
+  [WorksiteStatusEnum.Finished]: 'success'
 };
