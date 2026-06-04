@@ -1,14 +1,18 @@
+import type { AdressInterface } from '~/components/Clients/Types/adress.interface';
+import type { ClientTypeEnum } from '~/components/Clients/Types/clientTypeEnum';
+
 export interface ClientInterface {
   id: number;
-  contact: string | undefined;
+  contact: string;
+  name?: string;
   email: string;
-  phone: string | undefined;
-  company: {
-    name: string | undefined;
-  };
-  address: {
-    street: string | undefined;
-    city: string | undefined;
-    zipcode: number | undefined;
-  };
+  compagny?: string;
+  phone: string;
+  type: ClientTypeEnum;
+  siret: string;
+  tva_intra?: string;
+  adress: AdressInterface;
+  // V2
+  notes?: string;
+  source?: string;
 }
